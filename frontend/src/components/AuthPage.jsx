@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { loginUser, registerUser } from '../api';
+
+const API_BASE_URL = 'http://localhost:3001';
 
 const AuthPage = ({ onAuthSuccess }) => {
   const [isLogin, setIsLogin] = useState(true);
@@ -20,9 +21,27 @@ const AuthPage = ({ onAuthSuccess }) => {
     let response;
     try {
       if (isLogin) {
-        response = await loginUser(email, password);
+        response = await fetch('http://localhost:3001/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            email: email,
+            password: password
+          })
+        });
       } else {
-        response = await registerUser(email, password);
+        response = await fetch('http://localhost:3001/auth/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            email: email,
+            password: password
+          })
+        });
       }
 
       const data = await response.json();
