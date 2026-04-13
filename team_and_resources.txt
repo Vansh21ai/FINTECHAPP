@@ -1,0 +1,295 @@
+
+================================================================
+        FILE 2  —  TEAM WORK DIVISION  +  FREE RESOURCES
+        Gen-Z Financial Super App  |  Open Innovation Hackathon
+================================================================
+
+4 members. Everything runs in parallel on Day 1.
+Day 2 — everyone merges, deploys, and polishes the PPT together.
+
+----------------------------------------------------------------
+
+
+DEV 1  —  THE BACKEND ARCHITECT
+----------------------------------------------------------------
+
+  What you build:
+  The entire server, database, and the Financial Event Bus.
+  Nothing in the app saves or moves without your work.
+
+  Your tasks:
+
+      1.  Node.js + Express API
+          Set up all routes:  /user  /invest  /rewards  /trust-log  /insurance
+
+      2.  PostgreSQL Database  (on Neon — free)
+          Create tables for:
+          - Append-only transaction ledger
+          - Consent log (for Trust feature)
+          - User XP and tier tracking
+          - Rewards and micro-invest tracking
+
+      3.  Financial Event Bus
+          Use BullMQ + Upstash Redis.
+          4 queues:  invest / reward / insurance / trust
+          When a transaction fires → all 4 queues trigger at once.
+
+      4.  Auth
+          JWT tokens for login sessions.
+          bcrypt for password hashing.
+          Rate limiting on all financial routes.
+
+  Free tools:
+
+      Neon (PostgreSQL)     →  https://neon.tech
+      Upstash (Redis)       →  https://upstash.com
+      Railway (hosting)     →  https://railway.app
+      BullMQ docs           →  https://docs.bullmq.io
+
+  npm installs:
+      npm install express jsonwebtoken bcryptjs
+      npm install bullmq dotenv express-rate-limit
+
+
+----------------------------------------------------------------
+
+
+DEV 2  —  THE FRONTEND ENGINEER  +  ANDROID WRAPPER
+----------------------------------------------------------------
+
+  What you build:
+  Everything the user sees — dashboard, charts, animations, Android app.
+
+  Your tasks:
+
+      1.  React App + Bento Grid Dashboard Layout
+          Use Tailwind CSS for the grid.
+          Apply glassmorphism to all cards.
+          Set mesh gradient as the global background.
+
+      2.  All Charts using ApexCharts
+          - Line chart  →  Risk Simulation Sandbox
+          - Speedometer gauge  →  Loss Probability Meter
+          - Circular bar  →  Trust Score
+          - Area curve  →  Compound Interest (Micro-Invest)
+          - Progress bar  →  XP in the header
+
+      3.  Onboarding Flow
+          3 animated question cards using Framer Motion.
+          On submit → POST to backend → get config → load dashboard.
+
+      4.  Lottie Animations
+          Confetti  →  savings milestone hit
+          Coin spin  →  reward auto-invested
+          Badge unlock  →  XP level up
+
+      5.  Android Studio TWA Wrapper  (do this last, after deployment)
+          Wraps the deployed web app into a native Android shell.
+          Full screen. No browser bar. Looks 100% like a real app.
+
+          Steps:
+          - New project in Android Studio → "No Activity" template
+          - Add androidbrowserhelper to build.gradle
+          - Point manifest to your Cloudflare Pages URL
+          - Generate SHA-256 fingerprint
+          - Host assetlinks.json on the frontend domain
+          - Run on emulator or USB phone
+
+  Free tools:
+
+      Cloudflare Pages (hosting)  →  https://pages.cloudflare.com
+      ApexCharts                  →  https://apexcharts.com
+      LottieFiles                 →  https://lottiefiles.com
+      Mesh Gradient               →  https://meshgradient.in
+      Tailwind CSS                →  https://tailwindcss.com
+
+  npm installs:
+      npm install react-apexcharts apexcharts
+      npm install framer-motion
+      npm install @lottiefiles/react-lottie-player
+      npm install @splinetool/react-spline
+
+
+----------------------------------------------------------------
+
+
+DEV 3  —  THE DESIGNER  +  PPT
+----------------------------------------------------------------
+
+  What you build:
+  The visual identity of the app and the presentation.
+  Your work is what judges see first. Make it count.
+
+  Your tasks:
+
+      1.  Figma Mockups
+          - Onboarding 3-card screen
+          - Full dashboard (all panels visible)
+          Use Mesh Gradient plugin for background.
+          Export PNGs for the PPT.
+
+      2.  Spline 3D Models
+          - 3D umbrella for Insurance Visualizer
+            (icons under it = green, outside = red)
+          - 3D vault that opens when savings goal is hit
+          - 3D coin spin for micro-invest reward moment
+          Export each as a Spline scene URL → Dev 2 embeds in React.
+
+      3.  Color System  (share these with the whole team)
+
+          Background   →  #0D1B2A  (deep navy)
+          Accent 1     →  #6C63FF  (electric indigo)
+          Accent 2     →  #00D4AA  (teal)
+          Success      →  #22C55E  (green)
+          Danger       →  #EF4444  (red)
+          Text         →  #FFFFFF  (white)
+          Subtext      →  #94A3B8  (slate)
+
+      4.  PowerPoint  (7–8 slides max)
+
+          Slide 1  →  App name + splash mockup over mesh gradient
+          Slide 2  →  The 4 problems (icons, minimal text, no paragraphs)
+          Slide 3  →  The solution — exploded dashboard view from Figma
+          Slide 4  →  Architecture diagram (export from Excalidraw as PNG)
+          Slide 5  →  Key features highlight (Event Bus, Consent Ledger, XP System)
+          Slide 6  →  Challenges faced during development
+          Slide 7  →  Future scope (AI fraud detection, social saving goals)
+          Slide 8  →  Team + closing line
+
+          Use bento grid layout on Slide 3.
+          Use 3D Spline objects on Slides 1 and 3.
+          Keep mesh gradient background consistent on every slide.
+
+  Free tools:
+
+      Figma              →  https://figma.com
+      Spline 3D          →  https://spline.design
+      Excalidraw         →  https://excalidraw.com  (architecture diagram)
+      Mesh Gradient      →  https://meshgradient.in
+      Slidesgo templates →  https://slidesgo.com
+      Lucide Icons       →  https://lucide.dev
+
+
+----------------------------------------------------------------
+
+
+DEV 4  —  PRODUCT ANALYST  +  GITHUB MANAGER
+----------------------------------------------------------------
+
+  What you build:
+  The GitHub repo, README, API testing, and final QA checks.
+  You are the person making sure everything actually works before submission.
+
+  Your tasks:
+
+      1.  GitHub Repo Structure
+
+          /frontend       →  React app
+          /backend        →  Node.js API
+          /android        →  Android Studio TWA project
+          /docs           →  Architecture diagram PNG, wireframes
+          README.md       →  Full documentation
+          .env.example    →  Variable template  (never commit real .env)
+
+      2.  README must include:
+
+          - Problem statement summary
+          - Solution overview
+          - Tech stack list
+          - Architecture diagram image
+          - Installation + run commands  (see below)
+          - Team names and roles
+
+      3.  Run Commands for README
+
+          git clone https://github.com/your-team/genz-fin-app.git
+          cd genz-fin-app
+
+          cd backend
+          npm install
+          cp .env.example .env
+          npm run dev
+
+          cd ../frontend
+          npm install
+          npm run dev
+
+          Frontend  →  http://localhost:5173
+          Backend   →  http://localhost:3000
+
+      4.  API Testing with Postman
+
+          Test these routes before frontend connects:
+          POST /auth/register    →  does it create a user?
+          POST /auth/login       →  does JWT return?
+          POST /transaction      →  does ledger insert + event bus fire?
+          GET  /trust-log        →  does consent log return?
+          GET  /user/xp          →  does XP and tier return correctly?
+
+      5.  Final QA Checklist
+
+          ✓  All 4 charts render on mobile screen size
+          ✓  Onboarding flow completes end to end
+          ✓  Transaction triggers all 4 event queues
+          ✓  Lighthouse score:  Performance > 85,  Accessibility > 90
+          ✓  README is clear enough for a stranger to run the project
+
+  Free tools:
+
+      GitHub      →  https://github.com
+      Postman     →  https://postman.com
+      Sentry      →  https://sentry.io  (error tracking)
+      Lighthouse  →  Built into Chrome DevTools  (F12 → Lighthouse tab)
+      Shields.io  →  https://shields.io  (nice badges for README)
+
+
+----------------------------------------------------------------
+
+
+DEPLOYMENT STACK  —  Fast, Free, No Cold Starts
+----------------------------------------------------------------
+
+  Frontend   →  Cloudflare Pages   →  https://pages.cloudflare.com
+               Serves from 300+ global edge locations.
+               No cold starts. Always instant. Completely free.
+
+  Backend    →  Railway            →  https://railway.app
+               Always-on Node.js server. Never sleeps. Free tier is enough.
+
+  Database   →  Neon               →  https://neon.tech
+               Free serverless PostgreSQL. Wakes in milliseconds.
+
+  Redis      →  Upstash            →  https://upstash.com
+               Free serverless Redis. Powers cache + BullMQ queues.
+
+
+  Why not Vercel?
+  Vercel free tier puts functions to sleep after inactivity.
+  First user to open the app waits 5–10 seconds for it to wake up.
+  That is not acceptable for a live demo. Cloudflare Pages has no sleep.
+
+
+----------------------------------------------------------------
+
+
+2-DAY BUILD PLAN
+----------------------------------------------------------------
+
+  DAY 1  (build everything in parallel)
+
+      Dev 1  →  Set up backend API + database + event bus
+      Dev 2  →  Set up React app + dashboard layout + charts
+      Dev 3  →  Figma mockups + Spline 3D models + color system
+      Dev 4  →  GitHub repo structure + Postman test setup
+
+  DAY 2  (merge + finish + submit)
+
+      Morning   →  Connect frontend to backend APIs
+      Afternoon →  Lottie animations + Onboarding flow final polish
+      Evening   →  Deploy (Cloudflare + Railway + Neon + Upstash)
+                   Android Studio TWA wrap
+                   PPT final version
+                   GitHub README complete
+                   Submit
+
+================================================================

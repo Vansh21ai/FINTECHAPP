@@ -1,0 +1,116 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-primary: var(--accent-primary);
+  --color-brand-secondary: var(--accent-secondary);
+  --color-success: var(--success);
+  --color-danger: var(--danger);
+  --color-warning: var(--warning);
+  --color-slate-primary: var(--text-primary);
+  --color-slate-secondary: var(--text-secondary);
+}
+
+:root {
+  --bg-primary: #F8FAFC;
+  --bg-gradient-1: #E0E7FF;
+  --bg-gradient-2: #E0F2FE;
+  --bg-gradient-3: #F1F5F9;
+
+  --card-bg: rgba(255, 255, 255, 0.65);
+  --card-border: rgba(255, 255, 255, 0.4);
+
+  --accent-primary: #4F46E5;
+  --accent-secondary: #0EA5E9;
+  --accent-tertiary: #14B8A6;
+
+  --success: #10B981;
+  --danger: #F43F5E;
+  --warning: #F59E0B;
+
+  --text-primary: #0F172A;
+  --text-secondary: #64748B;
+}
+
+body {
+  margin: 0;
+  font-family: "Inter", "Roboto", "Outfit", sans-serif;
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Pastel Blob Animation Background */
+.blob-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  filter: blur(35px); /* Creates the glowing, soft edge effect */
+  background-color: #f8f9fa; /* Very light gray to make pastels pop */
+  overflow: hidden;
+  pointer-events: none; /* Let clicks pass through to underneath layers if needed */
+}
+
+/* Base styles for all blobs */
+.blob {
+  position: absolute;
+  opacity: 0.9;
+  mix-blend-mode: multiply; /* Blends overlapping colors together */
+  animation: morphAndMove 15s infinite alternate ease-in-out;
+}
+
+/* Individual Blob Styling and Positioning */
+.blob-1 {
+  width: 45vw; height: 45vw; background-color: #CDB4DB; /* Lavender */
+  top: -10%; left: -10%; animation-delay: 0s;
+}
+
+.blob-2 {
+  width: 55vw; height: 55vw; background-color: #FFC8DD; /* Light Pink */
+  top: 20%; right: -10%; animation-delay: -4s;
+}
+
+.blob-3 {
+  width: 40vw; height: 40vw; background-color: #FFAFCC; /* Deep Pink */
+  bottom: -10%; left: 10%; animation-delay: -8s;
+}
+
+.blob-4 {
+  width: 50vw; height: 50vw; background-color: #BDE0FE; /* Light Blue */
+  bottom: 10%; right: 20%; animation-delay: -12s;
+}
+
+.blob-5 {
+  width: 35vw; height: 35vw; background-color: #A2D2FF; /* Blue */
+  top: 30%; left: 30%; animation-delay: -16s;
+}
+
+/* Keyframes to control movement and shape shifting */
+@keyframes morphAndMove {
+  0% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  }
+  50% {
+    transform: translate(15vw, 10vh) scale(1.1) rotate(90deg);
+    border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
+  }
+  100% {
+    transform: translate(-10vw, -15vh) scale(0.9) rotate(180deg);
+    border-radius: 40% 60% 30% 70% / 60% 40% 70% 30%;
+  }
+}
+
+/* Glassmorphism utility */
+.glass-panel {
+  background-color: var(--card-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--card-border);
+  border-radius: 20px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05); /* very soft shadow */
+}

@@ -1,0 +1,35 @@
+:root {
+  /* * BACKGROUNDS & MESH GRADIENT COLORS 
+   * These are ultra-light and will blend together perfectly for a soft, airy background.
+   */
+  --bg-primary: #F8FAFC;       /* Very soft slate/off-white */
+  --bg-gradient-1: #E0E7FF;    /* Soft, washed-out indigo */
+  --bg-gradient-2: #E0F2FE;    /* Soft sky blue */
+  --bg-gradient-3: #F1F5F9;    /* Light slate for neutral blending */
+
+  /* * CARDS (GLASSMORPHISM)
+   * Using semi-transparent white allows the mesh gradient to bleed through softly.
+   */
+  --card-bg: rgba(255, 255, 255, 0.65);
+  --card-border: rgba(255, 255, 255, 0.4);
+
+  /* * BRAND ACCENTS
+   * Professional, trustworthy, but modern enough for Gen-Z.
+   */
+  --accent-primary: #4F46E5;   /* Indigo - Strong, trustworthy core color */
+  --accent-secondary: #0EA5E9; /* Sky Blue - Fresh, optimistic, pairs well with Indigo */
+  --accent-tertiary: #14B8A6;  /* Teal - Good for highlighting money/growth */
+
+  /* * SEMANTIC COLORS (For Charts & Feedback)
+   * Muted slightly so they don't scream at the user.
+   */
+  --success: #10B981;          /* Emerald Green - For safe investments / coverage */
+  --danger: #F43F5E;           /* Rose Red - For high risk / missing coverage */
+  --warning: #F59E0B;          /* Amber - For advisory logs */
+
+  /* * TYPOGRAPHY 
+   * Never use pure black. Deep slates look much more premium on light backgrounds.
+   */
+  --text-primary: #0F172A;     /* Deep Slate - For headings and important numbers */
+  --text-secondary: #64748B;   /* Mid Slate - For subtext and descriptions */
+}
