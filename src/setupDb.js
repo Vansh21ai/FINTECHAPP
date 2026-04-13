@@ -48,6 +48,18 @@ const setupDatabase = async () => {
                 amount DECIMAL(10, 2) NOT NULL,
                 invested_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
+
+            -- 5. Cashback Investment Units Table
+            CREATE TABLE IF NOT EXISTS cashback_investments (
+                id SERIAL PRIMARY KEY,
+                user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+                ledger_id INTEGER REFERENCES ledger(id) ON DELETE CASCADE,
+                fund_symbol VARCHAR(30) NOT NULL,
+                cashback_amount DECIMAL(10, 2) NOT NULL,
+                nav_price DECIMAL(12, 4) NOT NULL,
+                units DECIMAL(18, 8) NOT NULL,
+                invested_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
         `);
         
         console.log('✅ Database tables created successfully!');

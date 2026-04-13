@@ -1,4 +1,9 @@
 const express = require('express');
+const {
+    getInvestmentSummary,
+    getInvestmentHistory,
+    getInvestmentPerformanceSeries,
+} = require('../services/cashbackInvestment');
 
 const router = express.Router();
 
@@ -61,6 +66,57 @@ module.exports = (pool) => {
             message: "Simulated S&P 500 fractional growth (Last 30 Days)",
             simulation: simulatedDataPoints
         });
+    });
+
+    // ============================================
+    // 4. GET /investment/:user_id/summary (Live cashback MF value)
+    // ============================================
+    router.get('/investment/:user_id/summary', async (req, res) => {
+        try {
+            const { user_id } = req.params;
+            const summary = await getInvestmentSummary(pool, user_id);
+            res.json({
+                message: 'Live cashback investment summary fetched successfully',
+                investment: summary,
+            });
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ error: 'Server error fetching investment summary' });
+        }
+    });
+
+    // ============================================
+    // 5. GET /investment/:user_id/history (All cashback investment events)
+    // ============================================
+    router.get('/investment/:user_id/history', async (req, res) => {
+        try {
+            const { user_id } = req.params;
+            const history = await getInvestmentHistory(pool, user_id);
+            res.json({
+                message: 'Cashback investment history fetched successfully',
+                history,
+            });
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ error: 'Server error fetching investment history' });
+        }
+    });
+
+    // ============================================
+    // 6. GET /investment/:user_id/performance (Time-series for chart)
+    // ============================================
+    router.get('/investment/:user_id/performance', async (req, res) => {
+        try {
+            const { user_id } = req.params;
+            const series = await getInvestmentPerformanceSeries(pool, user_id);
+            res.json({
+                message: 'Investment performance series fetched successfully',
+                performance: series,
+            });
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ error: 'Server error fetching investment performance series' });
+        }
     });
 
     return router;

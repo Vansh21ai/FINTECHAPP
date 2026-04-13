@@ -1,37 +1,74 @@
 const { Queue, Worker } = require('bullmq');
 const Redis = require('ioredis');
+const { processCashbackInvestment } = require('../services/cashbackInvestment');
 
-// BullMQ requires a special Redis configuration setting
-const connection = new Redis(process.env.REDIS_URL, {
-    maxRetriesPerRequest: null,
-    tls: { rejectUnauthorized: false } // Required for Upstash
-});
+let connection = null;
+let redisReady = false;
+let investQueue = null;
+let rewardQueue = null;
+let insuranceQueue = null;
+let trustQueue = null;
 
-// ==========================================
-// 1. CREATE QUEUES (The "Waiting Rooms")
-// ==========================================
-const investQueue = new Queue('invest', { connection });
-const rewardQueue = new Queue('reward', { connection });
-const insuranceQueue = new Queue('insurance', { connection });
-const trustQueue = new Queue('trust', { connection });
+const initRedisAndQueues = async () => {
+    if (!process.env.REDIS_URL) {
+        console.warn('⚠️ REDIS_URL not configured. Background queues are disabled.');
+        return false;
+    }
+
+    try {
+        // BullMQ requires maxRetriesPerRequest to be null.
+        connection = new Redis(process.env.REDIS_URL, {
+            maxRetriesPerRequest: null,
+            lazyConnect: true,
+            tls: { rejectUnauthorized: false },
+        });
+        connection.on('error', (err) => {
+            console.error('❌ Redis runtime error:', err.message);
+        });
+        await connection.connect();
+        await connection.ping();
+
+        investQueue = new Queue('invest', { connection });
+        rewardQueue = new Queue('reward', { connection });
+        insuranceQueue = new Queue('insurance', { connection });
+        trustQueue = new Queue('trust', { connection });
+        redisReady = true;
+        console.log('✅ Event bus connected to Redis');
+        return true;
+    } catch (err) {
+        redisReady = false;
+        console.error('❌ Event bus Redis init failed:', err.message);
+        return false;
+    }
+};
 
 // ==========================================
 // 2. THE PRODUCER (Fires events to all queues)
 // ==========================================
 const triggerFinancialEvents = async (transactionData) => {
-    console.log(`\n🚀 [Event Bus] Transaction received! Executing SuperApp logic in background...`);
-    
-    // Send the data to all 4 queues simultaneously!
+    if (!redisReady) {
+        console.warn('⚠️ Event bus skipped: Redis unavailable.');
+        return false;
+    }
+
+    console.log('\n🚀 [Event Bus] Transaction received! Executing SuperApp logic in background...');
+
     await investQueue.add('analyze-investment', transactionData);
     await rewardQueue.add('calculate-rewards', transactionData);
     await insuranceQueue.add('check-insurance', transactionData);
     await trustQueue.add('log-consent', transactionData);
+    return true;
 };
 
 // ==========================================
 // 3. THE CONSUMERS (Workers that listen and process)
 // ==========================================
-const startEventConsumers = (pool) => {
+const startEventConsumers = async (pool) => {
+    const initialized = await initRedisAndQueues();
+    if (!initialized) {
+        console.warn('⚠️ Event consumers not started.');
+        return;
+    }
     console.log('🎧 Event Bus Consumers are listening...');
 
     // Worker 1: Invest
@@ -42,20 +79,11 @@ const startEventConsumers = (pool) => {
 
     // Worker 2: Reward (Micro-Invest + XP addition)
     new Worker('reward', async job => {
-        const { user_id, amount } = job.data;
-        
-        // 1. Calculate 5% wealth-back reward
-        const rewardAmount = (amount * 0.05).toFixed(2);
-        console.log(`🎁 [Reward Queue] Auto-investing $${rewardAmount} into Liquid MF for user ${user_id}`);
-        
-        await pool.query(
-            'INSERT INTO rewards (user_id, amount) VALUES ($1, $2)', 
-            [user_id, rewardAmount]
+        const { user_id } = job.data;
+        const investment = await processCashbackInvestment(pool, job.data);
+        console.log(
+            `🎁 [Reward Queue] Invested cashback for user ${user_id}: ${investment.units_allocated} units of ${investment.fund_symbol}`
         );
-
-        // 2. Add 10 XP for spending wisely
-        console.log(`🎁 [Reward Queue] Adding +10 XP to user ${user_id}`);
-        await pool.query('UPDATE users SET xp = xp + 10 WHERE id = $1', [user_id]);
     }, { connection });
 
     // Worker 3: Insurance

@@ -1,5 +1,6 @@
 const express = require('express');
 const { triggerFinancialEvents } = require('../queues/eventBus');
+const { processCashbackInvestment } = require('../services/cashbackInvestment');
 
 const router = express.Router();
 
@@ -20,13 +21,23 @@ module.exports = (pool) => {
                 [user_id, amount, type, description]
             );
 
-            // 2. BOOM! Trigger the Financial Event Bus to do 4 things in the background
-            await triggerFinancialEvents(newTx.rows[0]);
+            // 2. Prefer event bus, but fallback to direct cashback investment if queueing fails.
+            let cashbackInfo = null;
+            try {
+                const queued = await triggerFinancialEvents(newTx.rows[0]);
+                if (!queued) {
+                    cashbackInfo = await processCashbackInvestment(pool, newTx.rows[0]);
+                }
+            } catch (eventErr) {
+                console.error('Event Bus Error:', eventErr.message);
+                cashbackInfo = await processCashbackInvestment(pool, newTx.rows[0]);
+            }
 
             // 3. Immediately reply to the user (Super Fast Experience!)
             res.status(200).json({
                 message: '💸 Transaction successful! Background engines activated.',
-                transaction: newTx.rows[0]
+                transaction: newTx.rows[0],
+                cashback_investment: cashbackInfo,
             });
 
         } catch (err) {

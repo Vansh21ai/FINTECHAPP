@@ -9,6 +9,8 @@ const Redis = require('ioredis');        // Redis client
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const REDIS_ENABLED = process.env.ENABLE_REDIS === 'true';
+const EVENT_BUS_ENABLED = process.env.ENABLE_EVENT_BUS === 'true';
 
 // ---------------------------------------------------
 // Database & Cache setup
@@ -30,14 +32,24 @@ pool.connect((err, client, release) => {
     }
 });
 
-// Redis client (secure TLS connection)
-const redis = new Redis(process.env.REDIS_URL);
+let redis = null;
+if (REDIS_ENABLED && process.env.REDIS_URL) {
+    redis = new Redis(process.env.REDIS_URL, { lazyConnect: true });
+    redis.on('error', (err) => {
+        console.error('❌ Redis runtime error:', err.message);
+    });
+} else {
+    console.warn('⚠️ Redis disabled. Set ENABLE_REDIS=true to enable.');
+}
 
 // Test Redis connection
-redis
-    .ping()
-    .then(() => console.log('✅ Connected to Redis'))
-    .catch((err) => console.error('❌ Redis connection error:', err));
+if (redis) {
+    redis
+        .connect()
+        .then(() => redis.ping())
+        .then(() => console.log('✅ Connected to Redis'))
+        .catch((err) => console.error('❌ Redis connection error:', err.message));
+}
 
 // ---------------------------------------------------
 // Middleware
@@ -67,8 +79,14 @@ const financialRoutes = require('./routes/financials')(pool);
 const onboardingRoutes = require('./routes/onboarding')(pool);
 const { startEventConsumers } = require('./queues/eventBus');
 
-// Start listening for Background Tasks (BullMQ Workers)
-startEventConsumers(pool);
+if (EVENT_BUS_ENABLED) {
+    // Start listening for Background Tasks (BullMQ Workers)
+    startEventConsumers(pool).catch((err) => {
+        console.error('❌ Failed to start event consumers:', err.message);
+    });
+} else {
+    console.warn('⚠️ Event bus disabled. Set ENABLE_EVENT_BUS=true to enable.');
+}
 
 app.use('/auth', authRoutes);
 app.use('/transaction', transactionRoutes);
@@ -87,13 +105,16 @@ app.get('/ping', async (req, res) => {
     try {
         // Simple DB query to ensure connection works
         const dbResult = await pool.query('SELECT 1');
-        // Redis ping (already performed above, but we repeat for safety)
-        await redis.ping();
+        let redisOk = false;
+        if (redis) {
+            await redis.ping();
+            redisOk = true;
+        }
 
         res.json({
             status: 'ok',
             db: dbResult.rowCount === 1,
-            redis: true,
+            redis: redisOk,
         });
     } catch (e) {
         console.error('Health‑check error:', e);
