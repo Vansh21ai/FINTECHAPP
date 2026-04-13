@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import CompoundInterestChart from './charts/CompoundInterestChart';
 import { Player } from '@lottiefiles/react-lottie-player';
+import { Link } from 'react-router-dom';
 
 
 
@@ -40,7 +41,12 @@ const CenterPanel = () => {
         </div>
 
         {/* Micro-Invest Tracker & Control */}
-        <div className="flex flex-col items-end gap-2 relative">
+        <Link
+          to="/investments"
+          className="flex flex-col items-end gap-2 relative cursor-pointer
+                     hover:scale-105 transition-transform duration-200"
+          onClick={e => e.stopPropagation()}
+        >
           
           <div className="bg-white/40 p-3 rounded-2xl border border-white/60 shadow-sm backdrop-blur-sm relative">
             <h3 className="text-xs text-slate-secondary font-semibold uppercase mb-2 text-center">Micro-Invest Tracker</h3>
@@ -76,7 +82,7 @@ const CenterPanel = () => {
           >
             Demo: Trigger Auto-Invest
           </button>
-        </div>
+        </Link>
       </div>
 
       {/* Animated Coin Visual */}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mic, X, Send, MicOff, Volume2 } from 'lucide-react';
+import { askAIVoice } from '../api';
 
 // ─── Orb ring colors per state ──────────────────────────────────────────────
 const STATE_META = {
@@ -62,11 +63,7 @@ const FloatingAIAssistant = () => {
     let attempt = 0;
     while (attempt <= MAX_RETRIES) {
       try {
-        const res  = await fetch('http://localhost:3001/api/voice/ask', {
-          method:  'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body:    JSON.stringify({ spoken_text: text, mode: 'present' }),
-        });
+        const res  = await askAIVoice(text);
         const data = await res.json();
 
         const rateLimited =
@@ -93,7 +90,7 @@ const FloatingAIAssistant = () => {
           await new Promise(r => setTimeout(r, wait * 1000));
           attempt++;
         } else {
-          setAiResponse('Network error. Is the backend running on port 3001?');
+          setAiResponse('Network error. Is the backend running on port 3000?');
           setOrbState('idle'); return;
         }
       }
@@ -296,20 +293,23 @@ const FloatingAIAssistant = () => {
             )}
 
             {/* ── AI response ── */}
-            <AnimatePresence mode="wait">
-              {aiResponse && (
-                <motion.p
-                  key={aiResponse.slice(0, 30)}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.5 }}
-                  className="text-white/88 text-lg font-light text-center max-w-xl px-8 leading-relaxed mb-10"
-                >
-                  {aiResponse}
-                </motion.p>
-              )}
-            </AnimatePresence>
+            <div className="ai-scrollbar w-full max-w-xl px-8 mb-10 max-h-[30vh] overflow-y-auto pr-4">
+              <AnimatePresence mode="wait">
+                {aiResponse && (
+                  <motion.p
+                    key={aiResponse.slice(0, 30)}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="text-white/90 text-xl leading-relaxed text-center"
+                    style={{ fontFamily: "'Kalam', cursive", fontWeight: 400 }}
+                  >
+                    {aiResponse}
+                  </motion.p>
+                )}
+              </AnimatePresence>
+            </div>
 
             {/* ── Inline text input ── */}
             <AnimatePresence>
