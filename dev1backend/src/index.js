@@ -94,9 +94,10 @@ const ALLOWED_ORIGINS = [
     'http://localhost:5173',
     'http://localhost:5174',
     'http://localhost:3000',
-    // Production frontend (Cloudflare Pages — add your exact URL here)
+    // Production frontend (Cloudflare Pages)
     'https://fintechapp.pages.dev',
     'https://evloveai.pages.dev',
+    'https://evlove-superapps.pages.dev',
     // Render backend itself (for health-check pings)
     'https://fintechapp-cljw.onrender.com',
 ];
