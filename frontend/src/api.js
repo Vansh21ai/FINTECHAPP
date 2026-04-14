@@ -1,13 +1,13 @@
 /**
  * api.js — Centralized API client for EvloveAI Finance
  *
- * In development: Vite proxy forwards all /auth, /api, /transaction requests
- *   to http://localhost:3000 (dev1backend) automatically.
- *
- * In production: set VITE_API_BASE_URL in your .env to the deployed backend URL.
+ * API_BASE always points to the live Render backend.
+ * In local dev the Vite proxy intercepts these calls automatically
+ * (see vite.config.js server.proxy), but the hardcoded URL also works
+ * directly in production builds without any env-var setup.
  */
 
-export const API_BASE = import.meta.env.VITE_API_BASE_URL || '';
+export const API_BASE = 'https://fintechapp-cljw.onrender.com';
 
 // ─── Auth ─────────────────────────────────────────────────────────────────
 

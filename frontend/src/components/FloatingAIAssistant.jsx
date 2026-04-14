@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mic, X, Send, MicOff, Volume2 } from 'lucide-react';
+import { API_BASE } from '../api';
 
 // ─── Orb ring colors per state ──────────────────────────────────────────────
 const STATE_META = {
@@ -62,7 +63,6 @@ const FloatingAIAssistant = () => {
     let attempt = 0;
     while (attempt <= MAX_RETRIES) {
       try {
-        const API_BASE = import.meta.env.VITE_API_BASE_URL || '';
         const res  = await fetch(`${API_BASE}/api/voice/ask`, {
           method:  'POST',
           headers: { 'Content-Type': 'application/json' },

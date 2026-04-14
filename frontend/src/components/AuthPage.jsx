@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { API_BASE } from '../api';
 
 // Relative paths — Vite proxy forwards /auth/* → http://localhost:3000
 
@@ -20,7 +21,9 @@ const AuthPage = ({ onAuthSuccess }) => {
 
     let response;
     try {
-      const endpoint = isLogin ? '/auth/login' : '/auth/register';
+      const endpoint = isLogin
+        ? `${API_BASE}/auth/login`
+        : `${API_BASE}/auth/register`;
       const body = isLogin
         ? { email, password }
         : { name, email, password };
