@@ -1,11 +1,22 @@
 // src/index.js
 require('dotenv').config(); // loads .env variables
 
+const dns = require('dns');
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const { Pool } = require('pg');          // PostgreSQL connection pool
 const Redis = require('ioredis');        // Redis client
+
+// Force Google/Cloudflare public DNS so Neon hostname resolves even on restrictive ISPs
+const PUBLIC_DNS_ENABLED = process.env.FORCE_PUBLIC_DNS !== 'false';
+if (PUBLIC_DNS_ENABLED) {
+    try {
+        dns.setServers(['8.8.8.8', '1.1.1.1']);
+    } catch (err) {
+        console.warn('⚠️ Could not set custom DNS servers:', err.message);
+    }
+}
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -17,10 +28,34 @@ const EVENT_BUS_ENABLED = process.env.ENABLE_EVENT_BUS === 'true';
 // ---------------------------------------------------
 
 // PostgreSQL pool (Neon requires SSL)
-const pool = new Pool({
+// DATABASE_HOSTADDR lets us bypass DNS entirely by using a raw IP
+const baseSsl = { rejectUnauthorized: false };
+let poolConfig = {
     connectionString: process.env.DATABASE_URL,
-    ssl: { rejectUnauthorized: false },
-});
+    ssl: baseSsl,
+};
+
+if (process.env.DATABASE_URL) {
+    try {
+        const dbUrl = new URL(process.env.DATABASE_URL);
+        const overrideHost = process.env.DATABASE_HOSTADDR || dbUrl.hostname;
+        poolConfig = {
+            user: decodeURIComponent(dbUrl.username),
+            password: decodeURIComponent(dbUrl.password),
+            host: overrideHost,
+            port: Number(dbUrl.port || 5432),
+            database: dbUrl.pathname.replace(/^\//, ''),
+            ssl: { ...baseSsl, servername: dbUrl.hostname },
+        };
+        if (process.env.DATABASE_HOSTADDR) {
+            console.log(`ℹ️ Using DATABASE_HOSTADDR override: ${process.env.DATABASE_HOSTADDR}`);
+        }
+    } catch (err) {
+        console.warn('⚠️ Failed to parse DATABASE_URL, using raw connectionString:', err.message);
+    }
+}
+
+const pool = new Pool(poolConfig);
 
 // Test PostgreSQL connection
 pool.connect((err, client, release) => {
@@ -96,6 +131,10 @@ app.use('/api/onboarding', onboardingRoutes); // 3-Question Onboarding flow
 // AI Voice route (must be before server start)
 const aiVoiceRoutes = require('./routes/aiVoice')(pool);
 app.use('/api/voice', aiVoiceRoutes);
+
+// Market data route — real OHLC candlestick data for Sandbox
+const marketRoutes = require('./routes/market');
+app.use('/api/market', marketRoutes);
 
 // Simple health‑check route
 app.get('/', (req, res) => res.send('🚀 Backend is up!'));
