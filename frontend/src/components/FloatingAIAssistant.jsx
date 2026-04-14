@@ -62,7 +62,8 @@ const FloatingAIAssistant = () => {
     let attempt = 0;
     while (attempt <= MAX_RETRIES) {
       try {
-        const res  = await fetch('http://localhost:3001/api/voice/ask', {
+        const API_BASE = import.meta.env.VITE_API_BASE_URL || '';
+        const res  = await fetch(`${API_BASE}/api/voice/ask`, {
           method:  'POST',
           headers: { 'Content-Type': 'application/json' },
           body:    JSON.stringify({ spoken_text: text, mode: 'present' }),

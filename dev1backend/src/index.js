@@ -87,9 +87,32 @@ if (redis) {
 }
 
 // ---------------------------------------------------
-// Middleware
+// CORS — explicitly whitelist allowed origins
 // ---------------------------------------------------
-app.use(cors());
+const ALLOWED_ORIGINS = [
+    // Local development
+    'http://localhost:5173',
+    'http://localhost:5174',
+    'http://localhost:3000',
+    // Production frontend (Cloudflare Pages — add your exact URL here)
+    'https://fintechapp.pages.dev',
+    'https://evloveai.pages.dev',
+    // Render backend itself (for health-check pings)
+    'https://fintechapp-cljw.onrender.com',
+];
+
+app.use(cors({
+    origin: (origin, callback) => {
+        // Allow requests with no origin (curl, Postman, mobile apps, server-to-server)
+        if (!origin) return callback(null, true);
+        if (ALLOWED_ORIGINS.includes(origin)) return callback(null, true);
+        console.warn(`🚫 CORS blocked: ${origin}`);
+        callback(new Error(`CORS policy: origin "${origin}" is not allowed.`));
+    },
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+}));
 app.use(helmet());
 app.use(express.json());
 
