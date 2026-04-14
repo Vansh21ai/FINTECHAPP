@@ -97,7 +97,7 @@ const ALLOWED_ORIGINS = [
     // Production frontend (Cloudflare Pages)
     'https://fintechapp.pages.dev',
     'https://evloveai.pages.dev',
-    'https://evlove-superapps.pages.dev',
+    'https://evlove-superapp.pages.dev',
     // Render backend itself (for health-check pings)
     'https://fintechapp-cljw.onrender.com',
 ];
