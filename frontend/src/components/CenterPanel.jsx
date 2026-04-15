@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import CompoundInterestChart from './charts/CompoundInterestChart';
 import { Player } from '@lottiefiles/react-lottie-player';
 
@@ -24,8 +23,7 @@ const CenterPanel = () => {
   }, [showConfetti]);
 
   return (
-    <Link to="/investments" className="contents">
-    <div className="glass-panel p-6 col-span-1 lg:col-span-6 flex flex-col gap-6 relative overflow-hidden group cursor-pointer hover:scale-[1.015] transition-transform duration-200 hover:shadow-xl">
+    <div className="glass-panel p-6 col-span-1 lg:col-span-6 flex flex-col gap-6 relative overflow-hidden group">
       {/* Decorative background glow */}
       <div className="absolute top-0 right-0 w-64 h-64 bg-brand-primary/10 rounded-full blur-3xl -z-10 group-hover:bg-brand-primary/20 transition-all duration-700"></div>
 
@@ -108,7 +106,6 @@ const CenterPanel = () => {
         </div>
       </div>
     </div>
-    </Link>
   );
 };
 

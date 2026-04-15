@@ -6,8 +6,6 @@ import OnboardingFlow from './components/OnboardingFlow';
 import AuthPage from './components/AuthPage';
 import Dashboard from './components/Dashboard';
 import SandboxPage from './components/SandboxPage';
-import InsurancePage from './components/InsurancePage';
-import InvestmentsPage from './components/InvestmentsPage';
 import FloatingAIAssistant from './components/FloatingAIAssistant';
 import './index.css';
 
@@ -64,8 +62,6 @@ function App() {
             <Routes>
               <Route path="/" element={<Dashboard onSignOut={() => setAppState('auth')} />} />
               <Route path="/sandbox" element={<SandboxPage />} />
-              <Route path="/insurance" element={<InsurancePage />} />
-              <Route path="/investments" element={<InvestmentsPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
             <FloatingAIAssistant />
