@@ -1,6 +1,7 @@
 const express = require('express');
 const { triggerFinancialEvents } = require('../queues/eventBus');
 const { processCashbackInvestment } = require('../services/cashbackInvestment');
+const { processFallbackFinancialEffects } = require('../services/financialFallback');
 
 const router = express.Router();
 
@@ -23,14 +24,17 @@ module.exports = (pool) => {
 
             // 2. Prefer event bus, but fallback to direct cashback investment if queueing fails.
             let cashbackInfo = null;
+            let fallbackEffects = null;
             try {
                 const queued = await triggerFinancialEvents(newTx.rows[0]);
                 if (!queued) {
                     cashbackInfo = await processCashbackInvestment(pool, newTx.rows[0]);
+                    fallbackEffects = await processFallbackFinancialEffects(pool, newTx.rows[0], cashbackInfo);
                 }
             } catch (eventErr) {
                 console.error('Event Bus Error:', eventErr.message);
                 cashbackInfo = await processCashbackInvestment(pool, newTx.rows[0]);
+                fallbackEffects = await processFallbackFinancialEffects(pool, newTx.rows[0], cashbackInfo);
             }
 
             // 3. Immediately reply to the user (Super Fast Experience!)
@@ -38,6 +42,7 @@ module.exports = (pool) => {
                 message: '💸 Transaction successful! Background engines activated.',
                 transaction: newTx.rows[0],
                 cashback_investment: cashbackInfo,
+                fallback_effects: fallbackEffects,
             });
 
         } catch (err) {

@@ -4,7 +4,7 @@ async function testVoiceAgent() {
     console.log(`🗣️  Asking the AI Voice Agent about ${defaultSymbol}...`);
 
     try {
-        const response = await fetch('http://localhost:3000/api/voice/ask', {
+        const response = await fetch('https://fintechapp-cljw.onrender.com/api/voice/ask', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -25,7 +25,7 @@ async function testVoiceAgent() {
         console.log("==================================================\n");
 
     } catch (error) {
-        console.error("❌ Failed to connect. Make sure your server is running with 'npm run dev'!");
+        console.error("❌ Failed to connect. The Render server may be sleeping — wait 30 seconds and try again.");
     }
 }
 

@@ -93,7 +93,7 @@
             statusText.style.color = "#facc15";
 
             try {
-                const response = await fetch('http://localhost:3000/api/voice/ask', {
+                const response = await fetch('https://fintechapp-cljw.onrender.com/api/voice/ask', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -117,7 +117,7 @@
                 }
 
             } catch (err) {
-                statusText.innerText = "Failed to reach backend. Is 'npm run dev' running?";
+                statusText.innerText = "Failed to reach backend. The server may be sleeping — try again in a moment.";
                 statusText.style.color = "#ef4444";
             }
         };

@@ -16,7 +16,7 @@ async function testEventBus() {
         console.log(`🛒 User is buying: ${tx.description} for $${tx.amount.toLocaleString()}...`);
         
         try {
-            const response = await fetch('http://localhost:3000/transaction', {
+            const response = await fetch('https://fintechapp-cljw.onrender.com/transaction', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

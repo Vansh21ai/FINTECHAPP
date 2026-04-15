@@ -1,11 +1,44 @@
 // src/setupDb.js
 require('dotenv').config();
+const dns = require('dns');
 const { Pool } = require('pg');
 
-const pool = new Pool({
+const PUBLIC_DNS_ENABLED = process.env.FORCE_PUBLIC_DNS !== 'false';
+if (PUBLIC_DNS_ENABLED) {
+    try {
+        dns.setServers(['8.8.8.8', '1.1.1.1']);
+    } catch (err) {
+        console.warn('⚠️ Could not set custom DNS servers:', err.message);
+    }
+}
+
+const baseSsl = { rejectUnauthorized: false };
+let poolConfig = {
     connectionString: process.env.DATABASE_URL,
-    ssl: { rejectUnauthorized: false },
-});
+    ssl: baseSsl,
+};
+
+if (process.env.DATABASE_URL) {
+    try {
+        const dbUrl = new URL(process.env.DATABASE_URL);
+        const overrideHost = process.env.DATABASE_HOSTADDR || dbUrl.hostname;
+        poolConfig = {
+            user: decodeURIComponent(dbUrl.username),
+            password: decodeURIComponent(dbUrl.password),
+            host: overrideHost,
+            port: Number(dbUrl.port || 5432),
+            database: dbUrl.pathname.replace(/^\//, ''),
+            ssl: { ...baseSsl, servername: dbUrl.hostname },
+        };
+        if (process.env.DATABASE_HOSTADDR) {
+            console.log(`ℹ️ Using DATABASE_HOSTADDR override: ${process.env.DATABASE_HOSTADDR}`);
+        }
+    } catch (err) {
+        console.warn('⚠️ Failed to parse DATABASE_URL, using raw connectionString:', err.message);
+    }
+}
+
+const pool = new Pool(poolConfig);
 
 const setupDatabase = async () => {
     try {

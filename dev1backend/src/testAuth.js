@@ -5,7 +5,7 @@ async function testRegistration() {
     console.log("⏳ Testing User Registration...");
     
     try {
-        const response = await fetch('http://localhost:3000/auth/register', {
+        const response = await fetch('https://fintechapp-cljw.onrender.com/auth/register', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -27,7 +27,7 @@ async function testRegistration() {
             console.log(data);
         }
     } catch (error) {
-        console.error("\n❌ Could not connect. Is your server running (`npm run dev`)?");
+        console.error("\n❌ Could not connect. Is the Render server awake? Try again or check onrender.com.");
     }
 }
 
