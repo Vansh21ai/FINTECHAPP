@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const LeftPanel = () => {
   const [activeScenario, setActiveScenario] = useState('Car Accident');
@@ -13,7 +14,8 @@ const LeftPanel = () => {
   const activeCoverage = scenarios.find(s => s.name === activeScenario)?.covered;
 
   return (
-    <div className="glass-panel p-5 col-span-1 lg:col-span-3 flex flex-col gap-4">
+    <Link to="/insurance" className="contents">
+    <div className="glass-panel p-5 col-span-1 lg:col-span-3 flex flex-col gap-4 cursor-pointer hover:scale-[1.02] transition-transform duration-200 hover:shadow-xl">
       <div>
         <h2 className="text-slate-primary font-bold text-lg">Insurance Visualizer</h2>
         <p className="text-xs text-slate-secondary mt-1">Simulate damage and check your active coverage instantly.</p>
@@ -59,6 +61,7 @@ const LeftPanel = () => {
         ))}
       </div>
     </div>
+    </Link>
   );
 };
 
