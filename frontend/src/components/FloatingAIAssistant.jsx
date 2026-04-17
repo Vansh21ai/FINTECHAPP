@@ -34,16 +34,16 @@ const FloatingAIAssistant = () => {
   // ── Cleanup on close ────────────────────────────────────────
   useEffect(() => {
     if (!isOpen) {
-      window.speechSynthesis.cancel();
+      window.speechSynthesis?.cancel();
       setOrbState('idle');
       setTranscript('');
     }
   }, [isOpen]);
-  useEffect(() => () => window.speechSynthesis.cancel(), []);
+  useEffect(() => () => window.speechSynthesis?.cancel(), []);
 
   // ── TTS ─────────────────────────────────────────────────────
   const speakText = (text, isVoice) => {
-    window.speechSynthesis.cancel();
+    window.speechSynthesis?.cancel();
     if (!isVoice) return;
     const utter = new SpeechSynthesisUtterance(text);
     utter.onstart = () => setOrbState('speaking');
@@ -107,7 +107,7 @@ const FloatingAIAssistant = () => {
   const startListening = () => {
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SR) { alert('Speech recognition requires Chrome.'); return; }
-    window.speechSynthesis.cancel();
+    window.speechSynthesis?.cancel();
     const rec = new SR();
     rec.lang = 'en-US';
     rec.onstart  = () => setOrbState('listening');
@@ -118,7 +118,7 @@ const FloatingAIAssistant = () => {
   };
 
   const handleClose = () => {
-    window.speechSynthesis.cancel();
+    window.speechSynthesis?.cancel();
     setIsOpen(false);
   };
 
@@ -360,7 +360,7 @@ const FloatingAIAssistant = () => {
                   initial={{ opacity: 0, scale: 0.85 }}
                   animate={{ opacity: 1, scale: 1 }}
                   whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
-                  onClick={() => { window.speechSynthesis.cancel(); setOrbState('idle'); }}
+                  onClick={() => { window.speechSynthesis?.cancel(); setOrbState('idle'); }}
                   className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-teal-500/15 hover:bg-teal-500/25 text-teal-300 text-sm font-medium border border-teal-400/25 transition-colors"
                 >
                   <MicOff size={14} /> Stop
